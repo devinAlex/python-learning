@@ -31,3 +31,10 @@ if student[AGE] >= 17:
 if student[SEX] == 'male':
     pass
  ```
+```
+from collections import namedtuple
+Student = namedtuple('Student',['name','age','sex','email'])
+s = Student('Jim', 16, 'male','jim787@gmail.com')
+print s.name
+print isinstance(s, tuple)	
+```
