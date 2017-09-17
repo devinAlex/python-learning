@@ -19,7 +19,8 @@
 #### 解决方案：</br>
 1，定义类似与其他语言的枚举类型，也就是定义一系列数值常量。</br>
 2，使用标准库中collection.namedtuple替代内置tuple.</br>
-"""# NAME = 0
+```
+# NAME = 0
 # AGE = 1
 # SEX = 2
 NAME, AGE, SEX = xrange(3)
@@ -29,4 +30,4 @@ if student[AGE] >= 17:
     pass
 if student[SEX] == 'male':
     pass
-    """
+ ```
