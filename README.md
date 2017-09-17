@@ -66,3 +66,46 @@ txt = open('C:\\Users\\Administrator\\Desktop\\cc.txt').read()
 c3 = Counter(re.split('\W+', txt))
 print c3.most_common(10)
 ```
+### 四，如何根据字典中值的大小，对字典中的项排序
+#### 实际案例：
+某班英语成绩以字典形式存储为：{'Lilei':79,'Jim':88,'Lucy':92...}根据成绩高低，计算学生排名。</br>
+#### 解决方案：
+使用内置函数sorted:1，利用zip将字典数据转化元组。2，传递sorted函数的key参数</br>
+```
+from random import randint
+d = {x: randint(60, 100) for  x in 'xyzabc'}
+print sorted(zip(d.itervalues(), d.iterkeys()))
+print sorted(d.items(), key = lambda x:x[1])
+```
+### 五，如何快速找到多个字典中的公共键(key)?
+#### 实际案例：
+西班牙足球甲级联赛，每轮球员进球统计：</br>
+第一轮：{'苏亚雷斯':1,'梅西':2，...}</br>
+第二轮：{'苏亚雷斯':2,'C罗':1，...}</br>
+第三轮：{'苏亚雷斯':2,'托雷斯':2，...}</br>
+统计出前N轮，每场比赛都有进球的球员</br>
+```
+from random import randint,sample
+s1 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
+s2 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
+s3 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
+res = []
+for k in s1:
+    if k in s2 and k in s3:
+        res.append(k)
+print res
+```
+#### 解决方案：
+利用集合(set)的交集操作</br>
+1，使用字典的viewkeys()方法，得到一个字典keys的集合。</br>
+2，使用map函数，得到所有字典的keys的集合。</br>
+3，使用reduce函数，取得所有字典的Keys的集合的交集。</br>
+```
+from random import randint,sample
+s1 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
+s2 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
+s3 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
+#print s1.viewkeys() & s2.viewkeys() & s3.viewkeys()
+print map(dict.viewkeys, [s1,s2,s3])
+print reduce(lambda a, b: a & b, map(dict.viewkeys, [s1, s2, s3]))
+```
