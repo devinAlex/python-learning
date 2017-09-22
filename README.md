@@ -109,3 +109,49 @@ s3 = {x: randint(1,4) for x in sample('abcdefg', randint(3,6))}
 print map(dict.viewkeys, [s1,s2,s3])
 print reduce(lambda a, b: a & b, map(dict.viewkeys, [s1, s2, s3]))
 ```
+### 六，如何实现可迭代对象和迭代器对象？
+#### 实际案例：
+某软件要求，从网络抓取各个城市气温信息，并依次显示：</br>
+北京：15~20</br>
+天津：17~22</br>
+长春：12~18 ....</br>
+如果一次抓取所有城市天气再显示，显示第一个城市气温时，有很高的延时，并且浪费存储空间，我们期望以“用时访问”的策略，并且能把所有城市气温封装到一个对象里，可用for语句进行迭代，如何解决？</br>
+#### 解决方案：
+1，实现一个迭代器对象WeatherIterator,next方法每次返回一个城市气温。</br>
+2，实现一个可迭代对象WeatherIterable，__iter__方法返回一个迭代器对象。</br>
+```
+# coding:utf8
+import requests
+from collections import Iterable, Iterator
+def getWeather(city):
+    r = requests.get(u'http://wthrcdn.etouch.cn/weather_mini?city=' + city)
+    data = r.json()['data']['forecast'][0]
+    return '%s: %s, %s' % (city, data['low'], data['high'])
+#[u'北京', u'上海',u'广州', u'长春']
+#print getWeather(u'北京')
+#print getWeather(u'长春')
+
+class WeatherIterator(Iterator):
+	def __init__(self, cities):
+		self.cities = cities
+		self.index = 0
+	
+	def getWeather(self, city):
+		r = requests.get(u'http://wthrcdn.etouch.cn/weather_mini?city=' + city)
+		data = r.json()['data']['forecast'][0]
+		return '%s: %s, %s' % (city, data['low'], data['high'])
+	
+	def next(self):
+		if self.index == len(self.cities):
+			raise StopIteration
+		city = self.cities[self.index]
+		self.index += 1
+		return self.getWeather(city)
+class WeatherIterable(Iterable):
+	def __init__(self, cities):
+		self.cities = cities
+	def __iter__(self):
+		return WeatherIterator(self.cities)
+for x in WeatherIterable([u'北京', u'上海',u'广州', u'长春']):
+	print x
+```
